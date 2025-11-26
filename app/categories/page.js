@@ -79,7 +79,9 @@ export default function Home() {
                         className="h-full w-full object-contain p-8 group-hover:scale-110 transition-transform duration-700 ease-out"
                       />
                     ) : (
-                      <span className="text-gray-400 font-medium">No image</span>
+                      <span className="text-gray-400 font-medium">
+                        No image
+                      </span>
                     )}
                   </div>
                   <div className="p-8 border-t border-gray-50">
