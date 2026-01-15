@@ -78,7 +78,7 @@ export default function AdminPanel() {
   ]);
 
   return (
-    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen max-w-6xl w-full mx-auto py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1400px] mx-auto space-y-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -191,9 +191,12 @@ export default function AdminPanel() {
                             <div className="font-medium text-gray-900 text-sm group-hover:text-black transition-colors">
                               {p.name}
                             </div>
-                            <div className="text-xs text-gray-500 line-clamp-1 mt-0.5 max-w-[200px]">
-                              {p.description}
-                            </div>
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: p.description,
+                              }}
+                              className="text-xs text-gray-500 line-clamp-1 mt-0.5 max-w-[200px]"
+                            ></div>
                           </div>
                         </div>
                       </td>

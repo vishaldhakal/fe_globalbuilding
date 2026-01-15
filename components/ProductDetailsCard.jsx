@@ -26,7 +26,9 @@ export default function ProductDetails({ product }) {
       <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-200">
         <div className="space-y-6">
           <div>
-            <h2 className="text-3xl font-bold mb-4 text-gray-900">{product.name}</h2>
+            <h2 className="text-3xl font-bold mb-4 text-gray-900">
+              {product.name}
+            </h2>
             <p className="text-gray-900 text-2xl font-bold mb-4">
               Starting from ${product.price}
             </p>
@@ -46,8 +48,13 @@ export default function ProductDetails({ product }) {
           </div>
 
           <div className="pt-4 border-t border-gray-100">
-            <h3 className="font-bold text-lg mb-3 text-gray-900">Description</h3>
-            <p className="text-gray-600 leading-relaxed">{product.description}</p>
+            <h3 className="font-bold text-lg mb-3 text-gray-900">
+              Description
+            </h3>
+            <p
+              dangerouslySetInnerHTML={{ __html: product.description }}
+              className="text-gray-600 leading-relaxed"
+            />
           </div>
 
           {/* Back Button */}

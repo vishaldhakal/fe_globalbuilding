@@ -4,10 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { ProductCard } from "@/components/ProductCard";
+import { useSearchParams } from "next/navigation";
 const myLoader = ({ src }) => src;
 
 export default function CategoryPage() {
+  const searchParams = useSearchParams();
+  const subCategoryId = searchParams.get("subcategory");
   const { id } = useParams();
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,10 +25,19 @@ export default function CategoryPage() {
       .then((data) => {
         const cat = data.find((c) => c.id === parseInt(id));
         setCategory(cat);
+
+        if (subCategoryId && cat?.subcategories?.length) {
+          const matchedSub = cat.subcategories.find(
+            (sub) => sub.id === parseInt(subCategoryId)
+          );
+          setSelectedSubCategory(matchedSub || null);
+        } else {
+          setSelectedSubCategory(null);
+        }
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, subCategoryId]);
 
   const displayedProducts = selectedSubCategory
     ? selectedSubCategory.products || []
@@ -64,7 +76,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white py-20 px-4">
+    <div className="max-w-7xl w-full mx-auto min-h-screen bg-white py-20 px-4">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="text-gray-500 mb-12 text-sm flex items-center gap-2 font-medium">
@@ -97,12 +109,12 @@ export default function CategoryPage() {
             </h2>
             <div className="flex flex-wrap gap-3">
               <button
-                 onClick={() => setSelectedSubCategory(null)}
-                 className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
-                   selectedSubCategory === null
-                     ? "bg-black text-white shadow-lg"
-                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                 }`}
+                onClick={() => setSelectedSubCategory(null)}
+                className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                  selectedSubCategory === null
+                    ? "bg-black text-white shadow-lg"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
               >
                 All
               </button>
@@ -136,44 +148,16 @@ export default function CategoryPage() {
 
         {/* Featured Products */}
         <section>
-          <div className="mb-12">
+          <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Products
             </h2>
           </div>
 
           {displayedProducts && displayedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-x-4 gap-y-12">
               {displayedProducts?.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.id}`}
-                  className="group flex flex-col"
-                >
-                  <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-50 mb-4 border border-gray-100 group-hover:border-gray-200 transition-colors">
-                    {p?.image ? (
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="h-full w-full object-contain p-6 group-hover:scale-105 transition-transform duration-500 ease-out"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-gray-400">No image</div>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-1">
-                    <h3 className="text-base font-medium text-gray-900 group-hover:text-black">
-                      {p.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 line-clamp-1">
-                      {p.description}
-                    </p>
-                    <p className="text-sm font-semibold text-gray-900 mt-2">
-                      ${p.price || "Contact for Price"}
-                    </p>
-                  </div>
-                </Link>
+                <ProductCard key={p.id} product={p} />
               ))}
             </div>
           ) : (
