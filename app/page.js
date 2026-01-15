@@ -9,28 +9,33 @@ import ContactSection from "@/components/ContactSection";
 import FeaturedCategories from "@/components/FeaturedCategories";
 import BrowseCategory from "@/components/BrowserCategory";
 import SubcategorySection from "@/components/subCategorySection";
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function page() {
   const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
 
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const allCategories = [{ id: "all", name: "All", image: "" }, ...categories];
+
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    setLoading(true);
     fetch(`${apiUrl}/categories/`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    fetch(`${apiUrl}/products/`)
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.log(err));
-  }, []);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto"></div>
+          <p className="text-gray-500 font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Compute subcategories based on selected category
   const filteredSubcategories =
@@ -46,10 +51,10 @@ export default function page() {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col gap-3">
+      <div className="max-w-6xl mx-auto ">
+        <div className="flex flex-col gap-3 mb-28">
           {filteredSubcategories?.length > 0 ? (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-5">
               {filteredSubcategories?.map((subCategory) => {
                 return (
                   <SubcategorySection
