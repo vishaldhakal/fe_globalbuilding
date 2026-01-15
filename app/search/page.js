@@ -1,12 +1,10 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 
-export default function SearchPage() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query") || "";
+export default function SearchPage({ searchParams }) {
+  const query = searchParams?.query || "";
 
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
