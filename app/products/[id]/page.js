@@ -52,7 +52,9 @@ export default function ProductPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center space-y-6">
-          <h2 className="text-3xl font-bold text-gray-900">Product not found</h2>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Product not found
+          </h2>
           <Link
             href="/categories"
             className="inline-block px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-300 font-medium"
@@ -65,13 +67,20 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white pt-32 pb-20 px-4">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen w-full bg-white pt-12 pb-20 px-2 md:px-12">
+      <div className="max-w-6xl w-full mx-auto  ">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-12">
-          <Link href="/" className="hover:text-gray-900 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-gray-900 transition-colors">
+            Home
+          </Link>
           <ChevronRight className="w-4 h-4" />
-          <Link href="/categories" className="hover:text-gray-900 transition-colors">Categories</Link>
+          <Link
+            href="/categories"
+            className="hover:text-gray-900 transition-colors"
+          >
+            Categories
+          </Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-gray-900 font-medium">{product.name}</span>
         </div>
@@ -85,9 +94,14 @@ export default function ProductPage() {
           {/* Inquiry Form - 5 cols */}
           <div className="lg:col-span-5 lg:sticky lg:top-32">
             <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Request a Quote</h3>
-              <p className="text-gray-500 mb-8 text-sm">Interested in this product? Send us an inquiry and we'll get back to you with pricing and availability.</p>
-              <InquiryForm productId={product.id} />
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Request a Quote
+              </h3>
+              <p className="text-gray-500 mb-8 text-sm">
+                Interested in this product? Send us an inquiry and we'll get
+                back to you with pricing and availability.
+              </p>
+              <InquiryForm productIds={[product.id]} />
             </div>
           </div>
         </div>
@@ -95,4 +109,3 @@ export default function ProductPage() {
     </div>
   );
 }
-

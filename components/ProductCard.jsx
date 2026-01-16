@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cartContext";
+import { Star, Truck } from "lucide-react";
 export const ProductCard = ({ product }) => {
   const router = useRouter();
   const { addToCart, removeFromCart, isInCart } = useCart();
@@ -22,43 +23,64 @@ export const ProductCard = ({ product }) => {
         />
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-start mb-1">
         {/* Pricing Badge */}
-        <div className="flex items-center   mb-2">
-          <span className="bg-green-700 text-white text-sm font-bold px-2  py-1 rounded">
-            ${product.price}
-          </span>
-        </div>
-      </div>
 
-      {/* Product Info */}
-      <h3 className="text-xs font-semibold text-gray-700 line-clamp-2 mb-2 h-8">
+        {/* price after discout */}
+        <div className="bg-green-700 text-white text-sm font-bold px-2  py-1 rounded">
+          ${product.price}
+        </div>
+
+        {/* price after discout   */}
+        {product.hiked_price && (
+          <div className=" text-gray-500 text-sm font-semibold px-2 py-1 rounded line-through">
+            ${product.hiked_price}
+          </div>
+        )}
+      </div>
+      {product.discount_percent && (
+        <div className="flex items-center ">
+          <div className="flex-1 border-t border-dashed border-green-300"></div>
+          <span className="px-2 text-xs font-semibold text-green-600">
+            {product.discount_percent}% OFF
+          </span>
+          <div className="flex-1 border-t border-dashed border-green-300"></div>
+        </div>
+      )}
+
+      {/* Product name */}
+      <h3 className="text-sm font-semibold text-gray-700 line-clamp-2 h-10 mb-2  mt-1">
         {product.name}
       </h3>
-      <p className="flex items-center justify-between   mb-2">
-        {product?.availability ? (
-          <span className="px-1 py-1 bg-green-50 text-green-700 border border-green-100 rounded-md  text-sm font-semibold">
-            In Stock
-          </span>
-        ) : (
-          <span className="px-1 py-1 bg-red-50 text-red-700 border border-red-100 rounded-md text-sm font-semibold">
-            Out Of Stock
-          </span>
-        )}
+      {/* Delivery Info */}
+      {product.availability && (
+        <div className="flex items-center gap-1.5 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-md w-fit mb-2">
+          <Truck className="w-3.5 h-3.5 text-green-600" />
+          <span>Fast Delivery</span>
+        </div>
+      )}
+      {/* Rating badge */}
+      {product.rating && (
+        <div className="flex w-12 items-center gap-1 px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 text-xs font-semibold mb-2">
+          <Star size={12} className="fill-green-600 text-green-600" />
+          <span>{product.rating}</span>
+        </div>
+      )}
+      <p className="w-full flex items-center justify-center   mb-2">
         <button
           onClick={(e) => {
             e.stopPropagation();
             inCart ? removeFromCart(product.id) : addToCart(product);
           }}
-          className={`border font-bold py-1 rounded-lg text-sm transition-colors uppercase
+          className={` w-full border text-gray-900 font-semibold py-2 rounded-2xl text-sm transition-colors cursor-pointer border-none
         ${
           inCart
-            ? "border-gray-400 text-gray-600 hover:bg-gray-100 px-1"
-            : "border-pink-500 text-pink-500 hover:bg-pink-50  px-3"
+            ? " bg-gray-300 hover:bg-gray-200 px-1"
+            : " bg-yellow-400 hover:bg-yellow-500  px-3"
         }
       `}
         >
-          {inCart ? "Remove" : "Add"}
+          {inCart ? "Remove" : "Add to Cart"}
         </button>
       </p>
     </div>

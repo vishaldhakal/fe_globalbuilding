@@ -1,49 +1,17 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
-
-export default function SearchPage({ searchParams }) {
+import { fetchProducts } from "@/lib/api";
+export const revalidate = 60;
+export default async function SearchPage({ searchParams }) {
   const query = searchParams?.query || "";
 
-  const [allProducts, setAllProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const allProducts = await fetchProducts();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const filteredProducts = query
+    ? allProducts.filter((p) =>
+        p.name.toLowerCase().includes(query.toLowerCase())
+      )
+    : allProducts;
 
-  useEffect(() => {
-    setLoading(true);
-    fetch(`${apiUrl}/products`)
-      .then((res) => res.json())
-      .then((data) => {
-        setAllProducts(data);
-        setLoading(false);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    if (!query) {
-      setFilteredProducts(allProducts);
-      return;
-    }
-    const filtered = allProducts.filter((p) =>
-      p.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-  }, [query, allProducts]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin mx-auto"></div>
-          <p className="text-gray-500 font-medium">Loading...</p>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="max-w-6xl mx-auto py-16 px-4">
       <h1 className="text-3xl font-bold mb-8">Search Results for "{query}"</h1>
