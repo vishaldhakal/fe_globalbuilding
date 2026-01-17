@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { useCart } from "@/context/cartContext";
+import InquiryForm from "@/components/inquiryForm";
 export default function AdminPanel() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -41,136 +42,80 @@ export default function AdminPanel() {
   const { cart, removeFromCart } = useCart();
 
   return (
-    <div className="min-h-screen max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1400px] mx-auto space-y-8">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-              Cart
-            </h1>
-            <p className="text-gray-500 mt-1 text-sm">Manage your inventory</p>
-          </div>
-        </div>
+    <div className="min-h-screen w-full mx-auto py-12 px-2 md:px-12 ">
+      <div className="max-w-6xl w-full mx-auto ">
+        <div className="grid lg:grid-cols-12 gap-16 items-start">
+          {/* Product Details - 7 cols */}
+          <div className="lg:col-span-7">
+            <div className="max-w-2xl mx-auto ">
+              {/* Header */}
+              <h2 className="text-xl font-bold mb-4 bg-white border border-gray-100 rounded-xl shadow-sm p-6">
+                Shopping Cart ({cart?.length} items)
+              </h2>
 
-        {/* Products List */}
-        <div className="bg-white rounded-2xl shadow-none border border-gray-200 overflow-hidden">
-          {cart?.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50/50 border-b border-gray-100">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Product Details
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Category
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Price
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {cart.map((p) => (
-                    <tr
-                      key={p.id}
-                      className="group hover:bg-gray-50/50 transition-colors duration-200 cursor-pointer"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm">
-                            {p?.image ? (
-                              <img
-                                src={p.image}
-                                alt={p.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <Package className="w-5 h-5 text-gray-400" />
-                            )}
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-900 text-sm group-hover:text-black transition-colors">
-                              {p.name}
-                            </div>
-                            <div className="text-xs text-gray-500 line-clamp-1 mt-0.5 max-w-[200px]">
-                              {p.description}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+              {/* Cart Card */}
+              {cart?.map((item) => {
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-white border border-gray-100 rounded-xl shadow-sm p-6 flex items-center gap-4 mb-2"
+                  >
+                    {/* Product Image */}
+                    <div className="w-24 h-24 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="object-contain w-20 h-20"
+                      />
+                    </div>
+
+                    <div className="self-start flex-1">
+                      <div className="flex flex-col">
+                        <h3 className="text-base font-semibold text-gray-800">
+                          {item.name}
+                        </h3>
+
+                        <div
+                          dangerouslySetInnerHTML={{ __html: item.description }}
+                          className="text-xs text-gray-500 line-clamp-1 mt-0.5 max-w-[400px] mb-2"
+                        />
+                        <span className="inline-flex w-fit items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
                           {allCategories.find((c) => c.id === p.category)
                             ?.name || "Uncategorized"}
                         </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm font-semibold text-gray-900">
-                          ${p.price.toLocaleString()}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        {p.availability ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            In Stock
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                            Out of Stock
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeFromCart(p.id);
-                            }}
-                            className={`border font-bold py-1 rounded-lg text-sm transition-colors uppercase
-        ${"border-gray-400 text-gray-600 hover:bg-gray-100 px-1"}
-      `}
-                          >
-                            Remove
-                          </button>
-                          <Link
-                            href={`/products/${p.id}`}
-                            className={`border bg-orange-500 text-white px-2 py-1 rounded-lg text-sm transition-colors hover:bg-orange-600
-       
-      `}
-                          >
-                            Get a Qoute
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                    {/* Price and Delete */}
+                    <div className="flex items-center self-end gap-4">
+                      <span className="text-lg font-bold text-gray-900">
+                        $ {item.price}
+                      </span>
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        className="text-red-400 hover:text-red-600 p-1 transition-colors cursor pointer"
+                      >
+                        <Trash2 size={22} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ) : (
-            <div className="text-center py-24">
-              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-gray-300" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900">
-                No products found
+          </div>
+
+          {/* Inquiry Form - 5 cols */}
+          <div className="lg:col-span-5 lg:sticky lg:top-32">
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 shadow-sm">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Request a Quote
               </h3>
-              <p className="text-gray-500 mt-1">
-                Add to cart to manage you inventory
+              <p className="text-gray-500 mb-8 text-sm">
+                Interested in these product? Send us an inquiry and we'll get
+                back to you with pricing and availability.
               </p>
+              <InquiryForm cart productIds={cart.map((item) => item.id)} />
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

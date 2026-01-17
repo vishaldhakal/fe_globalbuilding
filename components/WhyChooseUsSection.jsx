@@ -25,8 +25,8 @@ export default function WhyChooseUsSection() {
   ];
 
   return (
-    <section className="py-32 bg-gray-100/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="w-full mx-auto px-2 md:px-12 ">
+      <div className="max-w-6xl w-full  mx-auto bg-gray-100/50 px-12  py-26">
         <div className="grid lg:grid-cols-2 gap-20 lg:gap-32 items-start">
           {/* Left Content */}
           <div>

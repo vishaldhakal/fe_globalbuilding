@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { MessageCircle } from "lucide-react";
-
-export default function InquiryForm({ productId }) {
+import { useCart } from "@/context/cartContext";
+export default function InquiryForm({ cart, productIds }) {
   const [form, setForm] = useState({
     name: "",
     email: "",
     message: "",
   });
   const [loading, setLoading] = useState(false);
-
+  const { clearCart } = useCart();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const handleChange = (e) => {
@@ -26,7 +26,7 @@ export default function InquiryForm({ productId }) {
     formData.append("name", form.name);
     formData.append("email", form.email);
     formData.append("message", form.message);
-    formData.append("product", Number(productId));
+    (productIds || []).forEach((id) => formData.append("products", id));
     try {
       const res = await fetch(`${apiUrl}/inquiries/`, {
         method: "POST",
@@ -36,6 +36,7 @@ export default function InquiryForm({ productId }) {
       if (res.ok) {
         toast.success("Inquiry sent successfully!");
         setForm({ name: "", email: "", message: "" });
+        clearCart();
       } else {
         const error = await res.json();
         console.log(error);
@@ -59,7 +60,9 @@ export default function InquiryForm({ productId }) {
           </div>
           <div>
             <h2 className="font-bold text-xl text-gray-900">Request a Quote</h2>
-            <p className="text-sm text-gray-600">Get detailed pricing & availability</p>
+            <p className="text-sm text-gray-600">
+              Get detailed pricing & availability
+            </p>
           </div>
         </div>
 

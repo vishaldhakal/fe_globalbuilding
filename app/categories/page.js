@@ -36,11 +36,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen max-w-7xl w-full mx-auto bg-white py-20 px-4">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen w-full px-2 md:px-12 bg-white pt-10 pb-20 ">
+      <div className="max-w-6xl w-full mx-auto  ">
         {/* Header */}
-        <div className="mb-16 max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-6">
+        <div className="mb-12 max-w-2xl">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-2">
             Browse Categories
           </h1>
           <p className="text-xl text-gray-500 font-light">

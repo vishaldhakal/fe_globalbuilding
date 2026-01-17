@@ -78,8 +78,8 @@ export default function AdminPanel() {
   ]);
 
   return (
-    <div className="min-h-screen max-w-6xl w-full mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1400px] mx-auto space-y-8">
+    <div className="min-h-screen w-full  py-12 px-2 md:px-12">
+      <div className=" max-w-6xl w-full mx-auto space-y-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
@@ -148,7 +148,7 @@ export default function AdminPanel() {
               <table className="w-full">
                 <thead className="bg-gray-50/50 border-b border-gray-100">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th className=" px-6  py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Product Details
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -174,7 +174,7 @@ export default function AdminPanel() {
                       }
                       className="group hover:bg-gray-50/50 transition-colors duration-200 cursor-pointer"
                     >
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 ">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm">
                             {p?.image ? (

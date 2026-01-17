@@ -76,8 +76,8 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="max-w-7xl w-full mx-auto min-h-screen bg-white py-20 px-4">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className=" w-full  min-h-screen px-2 md:px-12 bg-white pt-12 pb-20 ">
+      <div className="max-w-6xl w-full mx-auto ">
         {/* Breadcrumb */}
         <nav className="text-gray-500 mb-12 text-sm flex items-center gap-2 font-medium">
           <Link
@@ -91,8 +91,8 @@ export default function CategoryPage() {
         </nav>
 
         {/* Category Header */}
-        <div className="mb-16 max-w-3xl">
-          <h1 className="text-5xl font-bold text-gray-900 tracking-tight mb-6">
+        <div className="mb-12 max-w-3xl">
+          <h1 className="text-5xl font-bold text-gray-900 tracking-tight mb-2">
             {category.name}
           </h1>
           {category.description && (
@@ -104,7 +104,7 @@ export default function CategoryPage() {
 
         {category?.subcategories?.length > 0 && (
           <div className="mb-16">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">
               Filter by Subcategory
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -148,16 +148,18 @@ export default function CategoryPage() {
 
         {/* Featured Products */}
         <section>
-          <div className="mb-8">
+          <div className="mb-4">
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               Products
             </h2>
           </div>
 
           {displayedProducts && displayedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-x-4 gap-y-12">
+            <div className="flex flex-wrap gap-6">
               {displayedProducts?.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <div key={p.id}>
+                  <ProductCard product={p} />
+                </div>
               ))}
             </div>
           ) : (
