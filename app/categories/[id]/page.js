@@ -1,12 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
-import { useSearchParams } from "next/navigation";
-const myLoader = ({ src }) => src;
+import { ChevronRight, LayoutGrid } from "lucide-react";
 
 export default function CategoryPage() {
   const searchParams = useSearchParams();
@@ -28,7 +26,7 @@ export default function CategoryPage() {
 
         if (subCategoryId && cat?.subcategories?.length) {
           const matchedSub = cat.subcategories.find(
-            (sub) => sub.id === parseInt(subCategoryId)
+            (sub) => sub.id === parseInt(subCategoryId),
           );
           setSelectedSubCategory(matchedSub || null);
         } else {
@@ -37,7 +35,7 @@ export default function CategoryPage() {
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
-  }, [id, subCategoryId]);
+  }, [id, subCategoryId, apiUrl]);
 
   const displayedProducts = selectedSubCategory
     ? selectedSubCategory.products || []
@@ -50,8 +48,10 @@ export default function CategoryPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-gray-500 font-medium">Loading...</p>
+          <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-slate-500 font-bold text-sm tracking-widest uppercase">
+            Loading Collection
+          </p>
         </div>
       </div>
     );
@@ -60,13 +60,13 @@ export default function CategoryPage() {
   if (!category) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center space-y-6">
-          <h2 className="text-3xl font-bold text-gray-900">
+        <div className="text-center">
+          <h2 className="text-3xl font-black text-slate-900 mb-6">
             Category not found
           </h2>
           <Link
             href="/categories"
-            className="inline-block px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-300 font-medium"
+            className="inline-block px-8 py-4 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition-all font-bold"
           >
             Back to Categories
           </Link>
@@ -76,102 +76,108 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className=" w-full  min-h-screen px-2 md:px-12 bg-white pt-12 pb-20 ">
-      <div className="max-w-6xl w-full mx-auto ">
-        {/* Breadcrumb */}
-        <nav className="text-gray-500 mb-12 text-sm flex items-center gap-2 font-medium">
+    <div className="w-full min-h-screen bg-white pt-12 pb-24 px-2 md:px-12">
+      <div className="max-w-6xl mx-auto">
+        {/* Breadcrumb: Professional & Subtle */}
+        <nav className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-10">
           <Link
             href="/categories"
-            className="hover:text-black transition-colors duration-300"
+            className="hover:text-slate-900 transition-colors"
           >
             Categories
           </Link>
-          <span className="text-gray-300">/</span>
-          <span className="text-gray-900">{category.name}</span>
+          <ChevronRight size={12} className="text-slate-300" />
+          <span className="text-slate-900">{category.name}</span>
+          {selectedSubCategory && (
+            <>
+              <ChevronRight size={12} className="text-slate-300" />
+              <span className="text-orange-600">
+                {selectedSubCategory.name}
+              </span>
+            </>
+          )}
         </nav>
 
-        {/* Category Header */}
-        <div className="mb-12 max-w-3xl">
-          <h1 className="text-5xl font-bold text-gray-900 tracking-tight mb-2">
-            {category.name}
+        {/* Header Section */}
+        <header className="mb-12">
+          <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter mb-2">
+            {selectedSubCategory ? selectedSubCategory.name : category.name}
           </h1>
-          {category.description && (
-            <p className="text-xl text-gray-500 leading-relaxed font-light">
-              {category.description}
-            </p>
-          )}
-        </div>
+          <p className="max-w-2xl text-lg text-slate-500 font-medium leading-relaxed">
+            {selectedSubCategory?.description ||
+              category.description ||
+              "Explore our premium selection of building supplies and materials."}
+          </p>
+        </header>
 
+        {/* Subcategory Filter: Clean Pills */}
         {category?.subcategories?.length > 0 && (
-          <div className="mb-16">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              Filter by Subcategory
-            </h2>
+          <div className="mb-12">
+            <div className="flex items-center gap-2 mb-6">
+              <LayoutGrid size={18} className="text-slate-900" />
+              <h2 className="text-sm font-black uppercase tracking-widest text-slate-900">
+                Collections
+              </h2>
+            </div>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setSelectedSubCategory(null)}
-                className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`px-8 py-3 rounded-2xl text-sm font-bold transition-all cursor-pointer ${
                   selectedSubCategory === null
-                    ? "bg-black text-white shadow-lg"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-slate-900 text-white shadow-xl shadow-slate-200"
+                    : "bg-slate-50 text-slate-500 hover:bg-slate-100"
                 }`}
               >
-                All
+                All Products
               </button>
-              {category?.subcategories?.map((cat) => (
+              {category.subcategories.map((sub) => (
                 <button
-                  key={cat.id}
+                  key={sub.id}
                   onClick={() =>
                     setSelectedSubCategory(
-                      selectedSubCategory?.id === cat.id ? null : cat
+                      selectedSubCategory?.id === sub.id ? null : sub,
                     )
                   }
-                  className={`px-6 py-3 rounded-full flex items-center gap-3 text-sm font-medium transition-all duration-300 ${
-                    selectedSubCategory?.id === cat.id
-                      ? "bg-black text-white shadow-lg"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  className={`px-6 py-3 rounded-2xl flex items-center gap-3 text-sm font-bold transition-all cursor-pointer border ${
+                    selectedSubCategory?.id === sub.id
+                      ? "bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200"
+                      : "bg-white text-slate-500 border-slate-100 hover:border-slate-300"
                   }`}
                 >
-                  {cat.image && (
+                  {sub.image && (
                     <img
-                      className="w-6 h-6 rounded-full object-cover"
-                      src={cat.image}
-                      alt={cat.name}
+                      className="w-6 h-6 rounded-lg object-cover"
+                      src={sub.image}
+                      alt={sub.name}
                     />
                   )}
-                  <span>{cat.name}</span>
+                  <span>{sub.name}</span>
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* Featured Products */}
+        {/* Products Grid: Fixed Spacing */}
         <section>
-          <div className="mb-4">
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
-              Products
-            </h2>
-          </div>
-
-          {displayedProducts && displayedProducts.length > 0 ? (
-            <div className="flex flex-wrap gap-6">
-              {displayedProducts?.map((p) => (
-                <div key={p.id}>
+          {displayedProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-6">
+              {displayedProducts.map((p) => (
+                <div key={p.id} className="flex justify-center">
                   <ProductCard product={p} />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-24 bg-gray-50 rounded-3xl">
-              <p className="text-lg text-gray-500 mb-6">
-                No products available in this category
+            <div className="text-center py-32 bg-slate-50 rounded-[3rem] border border-slate-100">
+              <p className="text-slate-500 font-bold mb-8">
+                No products found in this section.
               </p>
               <Link
-                href="/categories"
-                className="inline-block px-8 py-4 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-300 font-medium"
+                href={"/categories"}
+                className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all"
               >
-                Browse Other Categories
+                Back to categories
               </Link>
             </div>
           )}
