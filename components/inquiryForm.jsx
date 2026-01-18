@@ -52,20 +52,7 @@ export default function InquiryForm({ cart, productIds }) {
 
   return (
     <div className="sticky top-24">
-      <div className="bg-white rounded-2xl shadow-sm p-8 space-y-6 border border-gray-200">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-            <MessageCircle className="w-6 h-6 text-gray-900" />
-          </div>
-          <div>
-            <h2 className="font-bold text-xl text-gray-900">Request a Quote</h2>
-            <p className="text-sm text-gray-600">
-              Get detailed pricing & availability
-            </p>
-          </div>
-        </div>
-
+      <div className="w-full bg-white rounded-2xl   space-y-6 ">
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

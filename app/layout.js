@@ -5,6 +5,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/context/cartContext";
 import NextTopLoader from "nextjs-toploader";
+import "nprogress/nprogress.css";
+import nProgress from "nprogress";
+nProgress.configure({
+  showSpinner: false,
+  trickleSpeed: 100,
+});
 const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],

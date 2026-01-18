@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import AddCategory from "./AddCategoryModel";
 import AddSubCategory from "./AddSubCategoryModel";
-
+import nProgress from "nprogress";
 export default function AdminPanel() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
@@ -95,7 +95,7 @@ export default function AdminPanel() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setIsCategoryModelOpen(true)}
-              className="group flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 text-gray-700 font-medium transition-all duration-200 shadow-sm hover:shadow"
+              className="group flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 text-gray-700 font-medium transition-all duration-200 shadow-sm hover:shadow cursor-pointer"
             >
               <div className="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
                 <Plus className="w-3 h-3" />
@@ -104,7 +104,7 @@ export default function AdminPanel() {
             </button>
             <button
               onClick={() => setIsSubCategoryModelOpen(true)}
-              className="group flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 text-gray-700 font-medium transition-all duration-200 shadow-sm hover:shadow"
+              className="group flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:border-gray-300 text-gray-700 font-medium transition-all duration-200 shadow-sm hover:shadow cursor-pointer"
             >
               <div className="w-5 h-5 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
                 <Plus className="w-3 h-3" />
@@ -112,8 +112,11 @@ export default function AdminPanel() {
               <span className="text-sm">Add Subcategory</span>
             </button>
             <button
-              onClick={() => router.push("/admin/products/new")}
-              className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-black font-medium transition-all duration-200 shadow-lg shadow-gray-900/10 hover:shadow-gray-900/20 active:scale-[0.98]"
+              onClick={() => {
+                nProgress.start();
+                router.push("/admin/products/new");
+              }}
+              className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-black font-medium transition-all duration-200 shadow-lg shadow-gray-900/10 hover:shadow-gray-900/20 active:scale-[0.98] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span className="text-sm">Add Product</span>
@@ -169,9 +172,10 @@ export default function AdminPanel() {
                   {filteredProducts.map((p) => (
                     <tr
                       key={p.id}
-                      onClick={() =>
-                        router.push(`/admin/products/${p.id}/edit`)
-                      }
+                      onClick={() => {
+                        nProgress.start();
+                        router.push(`/admin/products/${p.id}/edit`);
+                      }}
                       className="group hover:bg-gray-50/50 transition-colors duration-200 cursor-pointer"
                     >
                       <td className="px-6 py-4 ">

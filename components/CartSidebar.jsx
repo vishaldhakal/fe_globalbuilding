@@ -6,18 +6,20 @@ import {
   Trash2,
   X,
   ShoppingBag,
-  ArrowRight,
   Package,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { forwardRef } from "react";
+import nProgress from "nprogress";
 
-export default function CartSidebar({ isOpen, onClose }) {
-  const { cart, removeFromCart } = useCart();
+const CartSidebar = forwardRef(function CartSidebar({ isOpen, onClose }, ref) {
+  const { cart, removeFromCart, addToCart, decreaseQuantity } = useCart();
   const router = useRouter();
 
-  // Calculate Total
   const totalAmount = cart.reduce(
-    (acc, item) => acc + (parseFloat(item.price) || 0),
+    (acc, item) => acc + parseFloat(item.price) * (item.quantity || 1),
     0,
   );
 
@@ -45,8 +47,14 @@ export default function CartSidebar({ isOpen, onClose }) {
           : "opacity-0 pointer-events-none"
       }`}
     >
-      {/* Sidebar Container */}
+      {/* Background Overlay */}
       <div
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div
+        ref={ref}
         className={`fixed top-0 right-0 h-full w-full max-w-[400px] bg-white shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
@@ -62,13 +70,13 @@ export default function CartSidebar({ isOpen, onClose }) {
                 Your Cart
               </h2>
               <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-1">
-                {cart.length} {cart.length === 1 ? "Item" : "Items"}
+                {cart.length} {cart.length === 1 ? "Type" : "Types"}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-slate-900 cursor-pointer"
+            className="p-2 hover:bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 cursor-pointer"
           >
             <X size={24} />
           </button>
@@ -84,12 +92,9 @@ export default function CartSidebar({ isOpen, onClose }) {
               <h3 className="text-lg font-bold text-slate-800">
                 Your cart is empty
               </h3>
-              <p className="text-sm text-slate-500 mt-2 mb-8">
-                Looks like you haven't added anything to your cart yet.
-              </p>
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all cursor-pointer"
+                className="w-full py-3 mt-4 bg-slate-900 text-white rounded-xl font-bold text-sm cursor-pointer "
               >
                 Start Shopping
               </button>
@@ -99,7 +104,7 @@ export default function CartSidebar({ isOpen, onClose }) {
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="flex gap-4 p-3 bg-white border border-slate-100 rounded-2xl hover:border-orange-200 transition-colors"
+                  className="flex gap-4 p-3 bg-white border border-slate-100 rounded-2xl"
                 >
                   <div className="w-20 h-20 bg-slate-50 rounded-xl overflow-hidden shrink-0 border border-slate-100">
                     {item.image ? (
@@ -109,42 +114,53 @@ export default function CartSidebar({ isOpen, onClose }) {
                         className="w-full h-full object-contain p-2"
                       />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 relative overflow-hidden">
-                        {/* Abstract Background Decoration */}
-                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/40 rounded-full blur-2xl" />
-                        <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-pink-100/50 rounded-full blur-xl" />
-                        <Package className="w-12 h-12 text-slate-300 mb-2 relative z-10" />
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                        <Package className="text-slate-300" />
                       </div>
                     )}
                   </div>
 
                   <div className="flex flex-col flex-1 min-w-0">
-                    <h4 className="text-sm font-bold text-slate-800 line-clamp-1 mb-1">
-                      {item.name}
-                    </h4>
-
-                    {item?.rating && (
-                      <div className="flex items-center gap-1 mb-auto">
-                        <Star
-                          size={10}
-                          className="fill-orange-400 text-orange-400"
-                        />
-                        <span className="text-[10px] font-bold text-slate-500">
-                          {item.rating}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="font-black text-slate-900">
-                        ${item.price}
-                      </span>
+                    <div className="flex justify-between items-start">
+                      <h4 className="text-sm font-bold text-slate-800 line-clamp-1">
+                        {item.name}
+                      </h4>
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg transition-colors cursor-pointer"
+                        className="text-slate-400 hover:text-rose-500 transition-colors"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={14} />
                       </button>
+                    </div>
+
+                    <p className="text-xs font-black text-slate-900 mt-1">
+                      ${item.price}
+                    </p>
+
+                    {/* 3. Added Quantity Selector for Sidebar */}
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50">
+                        <button
+                          onClick={() => decreaseQuantity(item.id)}
+                          className="p-1 px-2 hover:bg-slate-200 rounded-l-lg text-slate-600 cursor-pointer"
+                        >
+                          <Minus size={12} />
+                        </button>
+                        <span className="px-3 text-xs font-bold text-slate-800">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => addToCart(item)}
+                          className="p-1 px-2 hover:bg-slate-200 rounded-r-lg text-slate-600 cursor-pointer"
+                        >
+                          <Plus size={12} />
+                        </button>
+                      </div>
+
+                      {/* Subtotal for this specific item row */}
+                      <span className="text-xs font-bold text-slate-400">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -159,7 +175,7 @@ export default function CartSidebar({ isOpen, onClose }) {
             <div className="flex items-center justify-between mb-4">
               <span className="text-slate-500 font-medium">Subtotal</span>
               <span className="text-xl font-black text-slate-900">
-                ${totalAmount.toLocaleString()}
+                ${totalAmount.toFixed(2)}
               </span>
             </div>
 
@@ -167,11 +183,12 @@ export default function CartSidebar({ isOpen, onClose }) {
               <button
                 onClick={() => {
                   onClose();
+                  nProgress.start();
                   router.push("/cart");
                 }}
-                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-xl cursor-pointer"
               >
-                Checkout Now <ArrowRight size={18} />
+                Checkout Now
               </button>
               <button
                 onClick={onClose}
@@ -180,12 +197,11 @@ export default function CartSidebar({ isOpen, onClose }) {
                 Continue Shopping
               </button>
             </div>
-            <p className="text-[10px] text-center text-slate-400 mt-4 font-medium uppercase tracking-widest">
-              Shipping & taxes calculated at checkout
-            </p>
           </div>
         )}
       </div>
     </div>
   );
-}
+});
+
+export default CartSidebar;

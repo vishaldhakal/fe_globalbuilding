@@ -43,7 +43,7 @@ const SubcategorySection = ({ subCategory }) => {
   };
 
   return (
-    <section className="py-2 bg-white relative group">
+    <section className="py-2 bg-white relative ">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-xl font-bold text-gray-800">{subCategory.name}</h2>
         <Link
