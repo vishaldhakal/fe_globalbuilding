@@ -6,15 +6,18 @@ import {
   ClipboardList,
   Info,
   Package,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { useCart } from "@/context/cartContext";
 import InquiryForm from "@/components/inquiryForm";
 
 export default function CartInquiryPage() {
   const [categories, setCategories] = useState([]);
-  const { cart, removeFromCart } = useCart();
+  // 1. Pull the new quantity helpers from context
+  const { cart, removeFromCart, addToCart, decreaseQuantity, cartCount } =
+    useCart();
 
-  // Fetch categories to show correct labels
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,7 +39,7 @@ export default function CartInquiryPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC] py-16  px-2 md:px-12">
+    <div className="min-h-screen bg-[#FAFBFC] py-16 px-2 md:px-12">
       <div className="max-w-6xl mx-auto">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
@@ -53,8 +56,10 @@ export default function CartInquiryPage() {
               Review your selection
             </h1>
           </div>
-          <p className="text-slate-500 font-medium">
-            Total Items: <span className="text-slate-900">{cart?.length}</span>
+          {/* 2. Show total units (cartCount) */}
+          <p className="text-slate-500 font-medium bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm">
+            Total Units:{" "}
+            <span className="text-orange-600 font-bold">{cartCount}</span>
           </p>
         </div>
 
@@ -65,7 +70,7 @@ export default function CartInquiryPage() {
               cart.map((item) => (
                 <div
                   key={item.id}
-                  className="group bg-white border border-slate-100 rounded-3xl p-5 flex items-center gap-6 transition-all hover:shadow-xl hover:shadow-slate-200/50"
+                  className="group bg-white border border-slate-100 rounded-[2rem] p-6 flex flex-col md:flex-row items-center gap-6 transition-all hover:shadow-xl hover:shadow-slate-200/50"
                 >
                   {/* Product Image */}
                   <div className="w-28 h-28 bg-slate-50 rounded-2xl flex items-center justify-center overflow-hidden shrink-0 border border-slate-50">
@@ -76,42 +81,63 @@ export default function CartInquiryPage() {
                         className="object-contain w-20 h-20 group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 relative overflow-hidden">
-                        {/* Abstract Background Decoration */}
-                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/40 rounded-full blur-2xl" />
-                        <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-pink-100/50 rounded-full blur-xl" />
-                        <Package className="w-12 h-12 text-slate-300 mb-2 relative z-10" />
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                        <Package className="w-12 h-12 text-slate-300" />
                       </div>
                     )}
                   </div>
 
                   {/* Content Area */}
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 w-full">
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <h3 className="text-lg font-black text-slate-900 truncate">
-                        {item.name}
-                      </h3>
+                      <div>
+                        <h3 className="text-lg font-black text-slate-900 truncate">
+                          {item.name}
+                        </h3>
+                        <div className="text-sm font-black uppercase tracking-wider text-slate-800">
+                          ${item.price}
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                          {allCategoryList.find((c) => c.id === item.category)
+                            ?.name || "Building Material"}
+                        </span>
+                      </div>
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-slate-300 hover:text-rose-500 transition-colors p-1"
+                        className="text-slate-300 hover:text-rose-500 transition-colors p-2 hover:bg-rose-50 rounded-xl"
                       >
-                        <Trash2 size={20} />
+                        <Trash2 size={18} />
                       </button>
                     </div>
 
-                    <div
-                      dangerouslySetInnerHTML={{ __html: item.description }}
-                      className="text-sm text-slate-500 line-clamp-1 mb-4 leading-relaxed"
-                    />
+                    <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
+                      {/* 3. Added Quantity Selector for the main page */}
+                      <div className="flex items-center bg-slate-100 rounded-2xl p-1 border border-slate-200">
+                        <button
+                          onClick={() => decreaseQuantity(item.id)}
+                          className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:shadow-sm transition-all text-slate-600"
+                        >
+                          <Minus size={16} />
+                        </button>
+                        <span className="w-12 text-center font-black text-slate-900">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => addToCart(item)}
+                          className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:shadow-sm transition-all text-slate-600"
+                        >
+                          <Plus size={16} />
+                        </button>
+                      </div>
 
-                    <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
-                        {allCategoryList.find((c) => c.id === item.category)
-                          ?.name || "Building Material"}
-                      </span>
-                      <span className="text-xl font-black text-slate-900">
-                        ${item.price}
-                      </span>
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase">
+                          Total Price
+                        </p>
+                        <span className="text-xl font-black text-slate-900">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -135,23 +161,25 @@ export default function CartInquiryPage() {
           {/* Right Column: Inquiry Form */}
           <div className="lg:col-span-5 lg:sticky lg:top-24">
             <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-2xl shadow-slate-200/60 relative overflow-hidden">
-              {/* Decorative Accent */}
               <div className="absolute top-0 left-0 w-full h-2 bg-orange-500" />
 
               <div className="mb-8">
                 <h3 className="text-3xl font-black text-slate-900 mb-3">
-                  Submit Inquiry
+                  Checkout
                 </h3>
                 <div className="flex items-start gap-3 bg-blue-50 p-4 rounded-2xl border border-blue-100">
                   <Info className="text-blue-500 shrink-0 mt-0.5" size={18} />
                   <p className="text-xs text-blue-700 font-medium leading-relaxed">
-                    Interested in these product? Send us an inquiry and we'll
-                    get back to you with pricing and availability.
+                    Review your {cartCount} items. Send us this inquiry and
+                    we'll get back to you with a formal quote.
                   </p>
                 </div>
               </div>
 
-              <InquiryForm cart productIds={cart.map((item) => item.id)} />
+              <InquiryForm
+                cartData={cart}
+                productIds={cart.map((item) => item.id)}
+              />
             </div>
           </div>
         </div>

@@ -2,13 +2,21 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cartContext";
-import { Star, Truck, ShoppingCart, Trash2, Package } from "lucide-react";
-
+import {
+  Star,
+  Truck,
+  ShoppingCart,
+  Trash2,
+  Package,
+  Plus,
+  Minus,
+} from "lucide-react";
+import nProgress from "nprogress";
 export const ProductCard = ({ product }) => {
   const router = useRouter();
-  const { addToCart, removeFromCart, isInCart } = useCart();
-  const inCart = isInCart(product.id);
-
+  const { addToCart, decreaseQuantity, cart } = useCart();
+  const cartItem = cart.find((item) => item.id === product.id);
+  const quantity = cartItem ? cartItem.quantity : 0;
   // Helper to render image or placeholder
   const renderMedia = () => {
     if (product.image) {
@@ -16,14 +24,14 @@ export const ProductCard = ({ product }) => {
         <img
           src={product.image}
           alt={product.name}
-          className="object-contain w-full h-full  transition-transform duration-500 group-hover:scale-110"
+          className="object-contain w-full h-full  transition-transform duration-500 hover:scale-110"
         />
       );
     }
 
     // PROFESSIONAL PLACEHOLDER DESIGN
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 relative overflow-hidden">
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 relative overflow-hidden ">
         {/* Abstract Background Decoration */}
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/40 rounded-full blur-2xl" />
         <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-pink-100/50 rounded-full blur-xl" />
@@ -34,9 +42,12 @@ export const ProductCard = ({ product }) => {
 
   return (
     <div
-      onClick={() => router.push(`/products/${product.id}`)}
+      onClick={() => {
+        nProgress.start();
+        router.push(`/products/${product.id}`);
+      }}
       className="group relative w-full md:w-[220px] bg-white rounded-2xl p-3 flex flex-col h-full cursor-pointer 
-                 transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-gray-100"
+                 transition-all duration-300  border border-gray-100"
     >
       {/* Media Container */}
       <div className="relative w-full aspect-square mb-4 bg-gray-50 rounded-xl overflow-hidden border border-gray-50">
@@ -87,22 +98,46 @@ export const ProductCard = ({ product }) => {
       </div>
 
       {/* Action Button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          inCart ? removeFromCart(product.id) : addToCart(product);
-        }}
-        className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95 cursor-pointer
-          ${
-            inCart
-              ? "bg-rose-50 text-rose-600 hover:bg-rose-100"
-              : "bg-[#FFD814] text-slate-900 hover:bg-[#F7CA00] shadow-[0_2px_5px_rgba(213,210,189,0.5)]"
-          }
-        `}
-      >
-        {inCart ? <Trash2 size={14} /> : <ShoppingCart size={14} />}
-        {inCart ? "Remove" : "Add to Cart"}
-      </button>
+      {quantity > 0 ? (
+        /* QUANTITY SELECTOR MODE */
+        <div className="flex items-center justify-between w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              decreaseQuantity(product.id);
+            }}
+            className="flex-1 py-2.5 flex justify-center items-center hover:bg-slate-200 text-slate-700 transition-colors"
+          >
+            <Minus size={16} />
+          </button>
+
+          <span className="flex-1 text-center font-bold text-slate-900">
+            {quantity}
+          </span>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product);
+            }}
+            className="flex-1 py-2.5 flex justify-center items-center hover:bg-slate-200 text-slate-700 transition-colors"
+          >
+            <Plus size={16} />
+          </button>
+        </div>
+      ) : (
+        /* INITIAL ADD TO CART MODE */
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            addToCart(product);
+          }}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95 cursor-pointer bg-[#FFD814] text-slate-900 hover:bg-[#F7CA00] shadow-[0_2px_5px_rgba(213,210,189,0.5)]"
+        >
+          <ShoppingCart size={14} />
+          Add to Cart
+        </button>
+      )}
     </div>
   );
 };

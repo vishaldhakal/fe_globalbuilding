@@ -6,10 +6,10 @@ import { useCart } from "@/context/cartContext";
 import { useRouter } from "next/navigation";
 import { fetchProducts } from "@/lib/api";
 import CartSidebar from "./CartSidebar";
-
+import nProgress from "nprogress";
 const Navbar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { cart } = useCart();
+  const { cart, cartCount } = useCart();
   const [query, setQuery] = useState("");
 
   const [allProducts, setAllProducts] = useState([]);
@@ -19,6 +19,7 @@ const Navbar = () => {
 
   const router = useRouter();
   const dropdownRef = useRef(null);
+  const CartSidebarRef = useRef(null);
 
   // 1. Fetch products once on mount to use for searching
   useEffect(() => {
@@ -67,10 +68,28 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // 4. Close cart sidebar when clicking outside
+  useEffect(() => {
+    if (!isCartOpen) return;
+
+    const handler = (e) => {
+      if (
+        CartSidebarRef.current &&
+        !CartSidebarRef.current.contains(e.target)
+      ) {
+        setIsCartOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [isCartOpen]);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (!query.trim()) return;
     setShowDropdown(false);
+    nProgress.start();
     router.push(`/search?query=${encodeURIComponent(query.trim())}`);
   };
 
@@ -116,13 +135,12 @@ const Navbar = () => {
                     Suggested Products
                   </p>
                   {filteredSuggestions.map((product) => (
-                    <button
+                    <Link
                       key={product.id}
+                      href={`/products/${product.id}`}
                       onClick={() => {
                         setQuery("");
                         setShowDropdown(false);
-
-                        router.push(`/products/${product.id}`);
                       }}
                       className="w-full text-left px-4 py-3 hover:bg-orange-50 flex items-center gap-3 transition-colors border-b last:border-0 border-gray-50 cursor-pointer "
                     >
@@ -149,7 +167,7 @@ const Navbar = () => {
                           ${product.price}
                         </p>
                       </div>
-                    </button>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -174,14 +192,18 @@ const Navbar = () => {
               <span className="text-xs mt-1">Cart</span>
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-orange-400 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
-                  {cart.length}
+                  {cartCount}
                 </span>
               )}
             </div>
           </div>
         </div>
       </nav>
-      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartSidebar
+        ref={CartSidebarRef}
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+      />
     </>
   );
 };
