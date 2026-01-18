@@ -1,88 +1,108 @@
 "use client";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cartContext";
-import { Star, Truck } from "lucide-react";
+import { Star, Truck, ShoppingCart, Trash2, Package } from "lucide-react";
+
 export const ProductCard = ({ product }) => {
   const router = useRouter();
   const { addToCart, removeFromCart, isInCart } = useCart();
   const inCart = isInCart(product.id);
-  return (
-    <div
-      className="w-40  rounded-xl flex flex-col h-full  cursor-pointer"
-      onClick={(e) => {
-        e.stopPropagation();
-        router.push(`/products/${product.id}`);
-      }}
-    >
-      {/* Image & Add Button */}
-      <div className="w-full  aspect-square mb-3 bg-transparent rounded-lg overflow-hidden border border-gray-200">
+
+  // Helper to render image or placeholder
+  const renderMedia = () => {
+    if (product.image) {
+      return (
         <img
           src={product.image}
           alt={product.name}
-          className="object-contain w-full h-full p-2 hover:scale-105 transition-all duration-300"
+          className="object-contain w-full h-full  transition-transform duration-500 group-hover:scale-110"
         />
+      );
+    }
+
+    // PROFESSIONAL PLACEHOLDER DESIGN
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 relative overflow-hidden">
+        {/* Abstract Background Decoration */}
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/40 rounded-full blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-pink-100/50 rounded-full blur-xl" />
+        <Package className="w-12 h-12 text-slate-300 mb-2 relative z-10" />
       </div>
+    );
+  };
 
-      <div className="flex items-center justify-start mb-1">
-        {/* Pricing Badge */}
+  return (
+    <div
+      onClick={() => router.push(`/products/${product.id}`)}
+      className="group relative w-full md:w-[220px] bg-white rounded-2xl p-3 flex flex-col h-full cursor-pointer 
+                 transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-gray-100"
+    >
+      {/* Media Container */}
+      <div className="relative w-full aspect-square mb-4 bg-gray-50 rounded-xl overflow-hidden border border-gray-50">
+        {renderMedia()}
 
-        {/* price after discout */}
-        <div className="bg-green-700 text-white text-sm font-bold px-2  py-1 rounded">
-          ${product.price}
-        </div>
-
-        {/* price after discout   */}
-        {product.hiked_price && (
-          <div className=" text-gray-500 text-sm font-semibold px-2 py-1 rounded line-through">
-            ${product.hiked_price}
+        {/* Floating Badges (Only show if data exists) */}
+        {product.discount_percent && (
+          <div className="absolute top-2 left-2 bg-rose-500 text-white text-[10px] font-black px-2 py-1 rounded-full shadow-sm">
+            {product.discount_percent}% OFF
           </div>
         )}
       </div>
-      {product.discount_percent && (
-        <div className="flex items-center ">
-          <div className="flex-1 border-t border-dashed border-green-300"></div>
-          <span className="px-2 text-xs font-semibold text-green-600">
-            {product.discount_percent}% OFF
-          </span>
-          <div className="flex-1 border-t border-dashed border-green-300"></div>
-        </div>
-      )}
 
-      {/* Product name */}
-      <h3 className="text-sm font-semibold text-gray-700 line-clamp-2 h-10 mb-2  mt-1">
-        {product.name}
-      </h3>
-      {/* Delivery Info */}
-      {product.availability && (
-        <div className="flex items-center gap-1.5 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-md w-fit mb-2">
-          <Truck className="w-3.5 h-3.5 text-green-600" />
-          <span>Fast Delivery</span>
+      {/* Info Section */}
+      <div className="flex flex-col flex-grow">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-lg font-black text-slate-900 leading-none">
+            ${product.price}
+          </span>
+          {product.hiked_price && (
+            <span className="text-xs text-slate-400 line-through font-medium">
+              ${product.hiked_price}
+            </span>
+          )}
         </div>
-      )}
-      {/* Rating badge */}
-      {product.rating && (
-        <div className="flex w-12 items-center gap-1 px-1.5 py-0.5 rounded-md bg-green-100 text-green-700 text-xs font-semibold mb-2">
-          <Star size={12} className="fill-green-600 text-green-600" />
-          <span>{product.rating}</span>
+
+        <h3 className="text-sm font-bold text-slate-700 line-clamp-2 h-10 mb-2 group-hover:text-pink-600 transition-colors">
+          {product.name}
+        </h3>
+
+        {/* Delivery & Rating Row */}
+        <div className="flex items-center justify-between mb-3">
+          {product.availability ? (
+            <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
+              <Truck size={12} /> Fast Delivery
+            </div>
+          ) : (
+            <div />
+          )}
+
+          {product.rating && (
+            <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-100">
+              <Star size={10} className="fill-amber-500 text-amber-500" />
+              {product.rating}
+            </div>
+          )}
         </div>
-      )}
-      <p className="w-full flex items-center justify-center   mb-2">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            inCart ? removeFromCart(product.id) : addToCart(product);
-          }}
-          className={` w-full border text-gray-900 font-semibold py-2 rounded-2xl text-sm transition-colors cursor-pointer border-none
-        ${
-          inCart
-            ? " bg-gray-300 hover:bg-gray-200 px-1"
-            : " bg-yellow-400 hover:bg-yellow-500  px-3"
-        }
-      `}
-        >
-          {inCart ? "Remove" : "Add to Cart"}
-        </button>
-      </p>
+      </div>
+
+      {/* Action Button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          inCart ? removeFromCart(product.id) : addToCart(product);
+        }}
+        className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95 cursor-pointer
+          ${
+            inCart
+              ? "bg-rose-50 text-rose-600 hover:bg-rose-100"
+              : "bg-[#FFD814] text-slate-900 hover:bg-[#F7CA00] shadow-[0_2px_5px_rgba(213,210,189,0.5)]"
+          }
+        `}
+      >
+        {inCart ? <Trash2 size={14} /> : <ShoppingCart size={14} />}
+        {inCart ? "Remove" : "Add to Cart"}
+      </button>
     </div>
   );
 };

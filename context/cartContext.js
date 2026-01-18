@@ -23,7 +23,8 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
-  const isInCart = (productId) => cart.some((item) => item.id === productId);
+  const isInCart = (productId) =>
+    cart.some((item) => String(item.id) === String(productId));
   return (
     <CartContext.Provider
       value={{ cart, addToCart, removeFromCart, isInCart, clearCart }}
